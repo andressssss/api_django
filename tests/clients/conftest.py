@@ -1,6 +1,7 @@
 import pytest
-from clients.models.cliente import Cliente
 from rest_framework.test import APIClient
+
+from clients.models.cliente import Cliente
 
 
 @pytest.fixture

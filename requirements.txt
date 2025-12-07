@@ -9,3 +9,5 @@ django-filter
 pytest
 pytest-django
 black
+isort
+flake8
