@@ -8,3 +8,4 @@ gunicorn
 django-filter
 pytest
 pytest-django
+black

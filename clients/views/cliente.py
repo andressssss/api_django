@@ -16,23 +16,23 @@ class ClienteViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        ids = self.request.query_params.get('ids')
+        ids = self.request.query_params.get("ids")
         if ids:
-            id_list = [int(i) for i in ids.split(',')]
+            id_list = [int(i) for i in ids.split(",")]
             queryset = queryset.filter(id__in=id_list)
         return queryset
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def portafolios(self, request, pk=None):
         cliente = self.get_object()
         portafolios = cliente.portafolios.all()
         serializer = PortafolioSerializer(portafolios, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['get', 'post'])
+    @action(detail=True, methods=["get", "post"])
     def deudas(self, request, pk=None):
         cliente = self.get_object()
-        if request.method == 'POST':
+        if request.method == "POST":
             serializer = DeudaSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(cliente=cliente)

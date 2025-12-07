@@ -1,6 +1,7 @@
 from django.db import models
 from .cliente import Cliente
 
+
 class Deuda(models.Model):
     ESTADOS = (
         ("pendiente", "Pendiente"),
@@ -8,7 +9,9 @@ class Deuda(models.Model):
         ("vencida", "Vencida"),
     )
 
-    cliente = models.ForeignKey(Cliente, related_name="deudas", on_delete=models.CASCADE)
+    cliente = models.ForeignKey(
+        Cliente, related_name="deudas", on_delete=models.CASCADE
+    )
     monto = models.DecimalField(max_digits=12, decimal_places=2)
     estado = models.CharField(max_length=20, choices=ESTADOS, default="pendiente")
     vencimiento = models.DateField()
