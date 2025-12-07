@@ -1,5 +1,5 @@
 [tool.bandit]
 exclude_dirs = [
-    "api_django/tests",
-    "*/migrations/*",
+    "tests",
+    "*/migrations/*"
 ]

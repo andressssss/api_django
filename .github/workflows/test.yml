@@ -57,7 +57,7 @@ jobs:
 
       - name: Security scan
         run: |
-          bandit -r .
+          bandit .
       - name: Apply migrations
         run: |
           python manage.py migrate
