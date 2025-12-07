@@ -1,0 +1,11 @@
+[tool.flake8]
+max-line-length = 88
+per-file-ignores = [
+    "*/migrations/*.py: E501,F401",
+]
+
+[tool.bandit]
+exclude_dirs = [
+    "api_django/tests",
+    "*/migrations/*",
+]
