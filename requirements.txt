@@ -1,0 +1,10 @@
+Django==5.1.4
+djangorestframework
+psycopg
+redis
+django-cors-headers
+python-dotenv
+gunicorn
+django-filter
+pytest
+pytest-django

@@ -1,0 +1,49 @@
+services:
+  web:
+    build: 
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: django_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ..:/app
+    env_file:
+      - .env.dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17
+    container_name: postgres_main
+    env_file:
+      - .env.postgres
+    ports:
+    - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U miuser -d miapp_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+
+  redis:
+    image: redis:8.4
+    container_name: redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pgdata:
