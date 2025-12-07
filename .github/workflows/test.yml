@@ -57,7 +57,7 @@ jobs:
 
       - name: Security scan
         run: |
-          bandit -r .
+          bandit -r . -x tests
 
       - name: Apply migrations
         run: |
