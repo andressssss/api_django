@@ -1,14 +1,75 @@
-name: Run Tests
+name: Django CI/CD
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.13'
-      - run: pip install -r requirements.txt
-      - run: pytest -v
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-django pytest-cov flake8 black isort bandit
+
+      - name: Set environment variables
+        run: |
+          export DJANGO_SETTINGS_MODULE=core.settings
+          export PYTHONUNBUFFERED=1
+          export GITHUB_ACTIONS=1
+          export POSTGRES_DB=test_db
+          export POSTGRES_USER=postgres
+          export POSTGRES_PASSWORD=postgres
+          export POSTGRES_HOST=localhost
+          export POSTGRES_PORT=5432
+
+      - name: Lint code
+        run: |
+          flake8 .
+          black --check .
+          isort --check-only .
+
+      - name: Security scan
+        run: |
+          bandit -r .
+
+      - name: Apply migrations
+        run: |
+          python manage.py migrate
+
+      - name: Run tests
+        run: |
+          pytest --ds=core.settings --cov=clients --cov-report=term-missing
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: htmlcov/
